@@ -118,6 +118,7 @@ body div[data-testid="stModal"] [role="dialog"] {
     color: #000000 !important;
 }
 
+body div[data-testid="stDialog"] div[role="dialog"],
 body div[data-testid="stDialog"] [role="dialog"] > div {
     width: 100% !important;
     max-width: 100% !important;
@@ -558,7 +559,7 @@ def load_default_checklist():
     ]
 
 # 6. POP-UP MODAL DIALOG
-@st.dialog(" ")
+@st.dialog(" ", width="large")
 def upload_questionnaire_dialog():
     st.markdown(MODAL_OVERRIDE_CSS, unsafe_allow_html=True)
     st.markdown(

@@ -101,7 +101,6 @@ div[data-testid="stModal"],
     color-scheme: light !important;
 }
 
-body div[data-testid="stDialog"] > div,
 body div[data-testid="stDialog"] [role="dialog"],
 body div[data-testid="stDialog"] div[data-testid="stDialogContent"],
 body div[data-testid="stModal"] [role="dialog"] {

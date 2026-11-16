@@ -1,0 +1,18 @@
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS & Office Temporary Files
+.DS_Store
+~$*
+
+# Local Audit Checklists & Offline Bundles
+iso_checklist.xlsx
+iso_checklist.csv
+offline_packages/

@@ -101,6 +101,7 @@ div[data-testid="stModal"],
     color-scheme: light !important;
 }
 
+body div[data-testid="stDialog"] > div,
 body div[data-testid="stDialog"] [role="dialog"],
 body div[data-testid="stDialog"] div[data-testid="stDialogContent"],
 body div[data-testid="stModal"] [role="dialog"] {
@@ -110,9 +111,16 @@ body div[data-testid="stModal"] [role="dialog"] {
     border: 3px solid rgba(0, 0, 0, 0.25) !important;
     box-shadow: 0px 24px 60px rgba(0, 0, 0, 0.5) !important;
     padding: 40px 32px 30px 32px !important;
-    max-width: 680px !important;
-    width: 90vw !important;
+    width: min(680px, 92vw) !important;
+    max-width: 92vw !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
     color: #000000 !important;
+}
+
+body div[data-testid="stDialog"] [role="dialog"] > div {
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
 body div[data-testid="stDialog"] h1,
@@ -533,18 +541,21 @@ def load_default_checklist():
         if records:
             return records
             
-    return [{
-        "id": "ID-1",
-        "domain": "Policy and Procedures",
-        "source": "ISO27001:2022 A.5.1",
-        "question": "Is there a standard Data Center Security Operating policy and procedures?",
-        "target": "DC Facility Manager",
-        "expectation": "YES",
-        "parent_id": None,
-        "trigger_value": "YES",
-        "info": "Verify documented standard operating procedures and review logs.",
-        "key": "ctrl_0_ID-1"
-    }]
+    return [
+        {
+            "id": f"ID-{i}",
+            "domain": "Domain Name",
+            "source": "Control Name",
+            "question": f"Question {i}",
+            "target": "",
+            "expectation": "YES",
+            "parent_id": None,
+            "trigger_value": "YES",
+            "info": "",
+            "key": f"ctrl_{i-1}_ID-{i}"
+        }
+        for i in range(1, 4)
+    ]
 
 # 6. POP-UP MODAL DIALOG
 @st.dialog(" ")

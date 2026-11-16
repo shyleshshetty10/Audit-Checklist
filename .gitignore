@@ -13,6 +13,5 @@ __pycache__/
 ~$*
 
 # Local Audit Checklists & Offline Bundles
-iso_checklist.xlsx
 iso_checklist.csv
 offline_packages/

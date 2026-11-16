@@ -93,6 +93,7 @@ MODAL_OVERRIDE_CSS = """
 <style>
 div[data-testid="stDialog"],
 div[data-testid="stModal"],
+[data-baseweb="modal"],
 [role="dialog"] {
     --primary-color: #000000 !important;
     --background-color: #E2E8F0 !important;
@@ -101,30 +102,37 @@ div[data-testid="stModal"],
     color-scheme: light !important;
 }
 
-body div[data-testid="stDialog"] [role="dialog"] {
-    background-color: transparent !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    width: auto !important;
-    max-width: 95vw !important;
-    margin: auto !important;
+div[data-testid="stDialog"] > div,
+div[data-testid="stModal"] > div,
+[data-baseweb="modal"] > div {
+    overflow: visible !important;
 }
 
-body div[data-testid="stDialog"] div[data-testid="stDialogContent"],
-body div[data-testid="stDialog"] [role="dialog"] > div {
+body div[data-testid="stDialog"] [role="dialog"],
+body div[data-testid="stModal"] [role="dialog"],
+body [data-baseweb="modal"] [role="dialog"] {
     background-color: #E2E8F0 !important;
     background: #E2E8F0 !important;
     border-radius: 36px !important;
     border: 3px solid rgba(0, 0, 0, 0.25) !important;
     box-shadow: 0px 24px 60px rgba(0, 0, 0, 0.5) !important;
     padding: 40px 32px 30px 32px !important;
-    width: min(640px, 90vw) !important;
-    max-width: min(640px, 90vw) !important;
-    margin: 0 auto !important;
+    width: min(680px, 92vw) !important;
+    max-width: 92vw !important;
+    min-width: min(680px, 92vw) !important;
+    overflow: visible !important;
     box-sizing: border-box !important;
     color: #000000 !important;
+}
+
+body div[data-testid="stDialog"] [role="dialog"] > div,
+body [data-baseweb="modal"] [role="dialog"] > div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
 body div[data-testid="stDialog"] h1,

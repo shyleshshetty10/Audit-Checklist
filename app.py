@@ -101,26 +101,30 @@ div[data-testid="stModal"],
     color-scheme: light !important;
 }
 
-body div[data-testid="stDialog"] [role="dialog"],
+body div[data-testid="stDialog"] [role="dialog"] {
+    background-color: transparent !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    max-width: 95vw !important;
+    margin: auto !important;
+}
+
 body div[data-testid="stDialog"] div[data-testid="stDialogContent"],
-body div[data-testid="stModal"] [role="dialog"] {
+body div[data-testid="stDialog"] [role="dialog"] > div {
     background-color: #E2E8F0 !important;
     background: #E2E8F0 !important;
     border-radius: 36px !important;
     border: 3px solid rgba(0, 0, 0, 0.25) !important;
     box-shadow: 0px 24px 60px rgba(0, 0, 0, 0.5) !important;
     padding: 40px 32px 30px 32px !important;
-    width: min(680px, 92vw) !important;
-    max-width: 92vw !important;
-    overflow: visible !important;
+    width: min(640px, 90vw) !important;
+    max-width: min(640px, 90vw) !important;
+    margin: 0 auto !important;
     box-sizing: border-box !important;
     color: #000000 !important;
-}
-
-body div[data-testid="stDialog"] div[role="dialog"],
-body div[data-testid="stDialog"] [role="dialog"] > div {
-    width: 100% !important;
-    max-width: 100% !important;
 }
 
 body div[data-testid="stDialog"] h1,
@@ -144,6 +148,8 @@ body div[data-testid="stDialog"] [data-testid="stFileUploader"] section {
     border-radius: 12px !important;
     box-shadow: 4px 4px 0px #000000 !important;
     padding: 24px 20px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
     color: #000000 !important;
 }
 
@@ -558,7 +564,7 @@ def load_default_checklist():
     ]
 
 # 6. POP-UP MODAL DIALOG
-@st.dialog(" ", width="large")
+@st.dialog(" ")
 def upload_questionnaire_dialog():
     st.markdown(MODAL_OVERRIDE_CSS, unsafe_allow_html=True)
     st.markdown(

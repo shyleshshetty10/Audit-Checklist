@@ -15,7 +15,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 # 1. Page Configuration
-st.set_page_config(page_title="ISO Audit Engine", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="AC - Audit Checklist", layout="wide", initial_sidebar_state="collapsed")
 
 # 2. State Initialization
 if 'theme_mode' not in st.session_state:
@@ -29,7 +29,7 @@ if 'show_upload_modal' not in st.session_state:
 if 'deck_version' not in st.session_state:
     st.session_state.deck_version = 0
 
-header_fields = ["lead_auditor", "co_auditor", "dc_name", "dc_location", "dc_pocs", "type_of_dc"]
+header_fields = ["lead_auditor", "co_auditor", "entity_name", "entity_location", "pocs", "type_of_audit", "custom_audit_type"]
 for field in header_fields:
     if field not in st.session_state:
         st.session_state[field] = ""
@@ -75,7 +75,6 @@ if st.session_state.theme_mode == "LIGHT MODE":
     sidebar_card_bg = "#FF6B6B" 
     sidebar_card_text = "#000000"
     sidebar_text = "#000000"
-    input_bg = "#FFFFFF"        
     shadow_color = "#00FFC6"    
 else:
     bg_color = "#121212"        
@@ -85,8 +84,14 @@ else:
     sidebar_card_bg = "#B83B5E" 
     sidebar_card_text = "#FFFFFF"
     sidebar_text = "#FFFFFF"    
-    input_bg = "#1A202C"        
     shadow_color = "#00FFC6"    
+
+# Field shading & text remain locked to Light Mode styling across all modes
+field_bg = "#FFFFFF"
+field_text_color = "#000000"
+field_placeholder_color = "#4A5568"
+field_border_color = "#000000"
+field_shadow_color = "#000000"
 
 # 4. Global CSS Stylesheet
 MODAL_OVERRIDE_CSS = """
@@ -224,7 +229,7 @@ st.markdown(
         display: inline-block !important;
         width: 22px !important;
         height: 18px !important;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='{"white" if is_dark else "black"}'%3E%3Cpath d='M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z'/%3E%3C/svg%3E") !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z'/%3E%3C/svg%3E") !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
         background-size: contain !important;
@@ -232,9 +237,9 @@ st.markdown(
 
     button[data-testid="stSidebarCollapseButton"],
     button[data-testid="stExpandSidebarButton"] {{
-        background-color: {input_bg} !important;
-        border: 3px solid {"#00FFC6" if is_dark else "#000000"} !important;
-        box-shadow: 4px 4px 0px {"#00FFC6" if is_dark else "#000000"} !important;
+        background-color: {field_bg} !important;
+        border: 3px solid {field_border_color} !important;
+        box-shadow: 4px 4px 0px {field_shadow_color} !important;
         border-radius: 0px !important;
         padding: 6px 10px !important;
         cursor: pointer !important;
@@ -292,51 +297,80 @@ st.markdown(
         margin-bottom: 15px;
     }}
 
+    /* Form Controls: Retain Light-Mode Shading & Typography Across All Modes */
     div[data-testid="stToggle"] {{
-        background-color: {input_bg} !important;
+        background-color: {field_bg} !important;
         padding: 8px 12px !important;
-        border: 3px solid {"#00FFC6" if is_dark else "#000000"} !important;
-        box-shadow: 4px 4px 0px {"#00FFC6" if is_dark else "#00FFC6"} !important;
+        border: 3px solid {field_border_color} !important;
+        box-shadow: 4px 4px 0px {field_shadow_color} !important;
         border-radius: 0px !important;
     }}
 
     div.stRadio > div {{
-        background-color: {input_bg} !important;
+        background-color: {field_bg} !important;
         padding: 10px;
-        border: 3px solid {"#000000" if not is_dark else "#4A5568"} !important;
-        box-shadow: 4px 4px 0px {"#000000" if not is_dark else "#00FFC6"} !important;
+        border: 3px solid {field_border_color} !important;
+        box-shadow: 4px 4px 0px {field_shadow_color} !important;
         border-radius: 0px !important;
+    }}
+    div.stRadio label, div.stRadio p, div.stRadio span {{
+        color: {field_text_color} !important;
     }}
 
     div[data-testid="stRadioGap"] {{
         font-size: 0px !important;
         color: transparent !important;
         width: 16px !important;
-        background-color: {"#000000" if not is_dark else "#00FFC6"} !important;
+        background-color: #000000 !important;
         margin: 0px 10px !important;
-        border: 1px solid {text_color} !important;
+        border: 1px solid #000000 !important;
     }}
     
     div.stTextInput > div > div > input {{
-        background-color: {input_bg} !important;
-        border: 3px solid {"#000000" if not is_dark else "#4A5568"} !important;
-        box-shadow: 4px 4px 0px {"#000000" if not is_dark else "#00FFC6"} !important;
+        background-color: {field_bg} !important;
+        border: 3px solid {field_border_color} !important;
+        box-shadow: 4px 4px 0px {field_shadow_color} !important;
         border-radius: 0px !important;
-        color: {text_color} !important;
-        font-weight: bold !important;
+        color: {field_text_color} !important;
+        -webkit-text-fill-color: {field_text_color} !important;
+        font-weight: 900 !important;
+    }}
+
+    div.stTextInput > div > div > input::placeholder {{
+        color: {field_placeholder_color} !important;
+        -webkit-text-fill-color: {field_placeholder_color} !important;
+        opacity: 1 !important;
     }}
     
     div.stTextInput > div > div > input:focus {{
-        border: 3px solid {"#000000" if not is_dark else "#00FFC6"} !important;
-        box-shadow: 4px 4px 0px {"#000000" if not is_dark else "#00FFC6"} !important;
+        border: 3px solid {field_border_color} !important;
+        box-shadow: 4px 4px 0px {field_shadow_color} !important;
     }}
 
     div.stSelectbox > div > div {{
-        border: 3px solid {"#000000" if not is_dark else "#4A5568"} !important;
-        box-shadow: 4px 4px 0px {"#000000" if not is_dark else "#00FFC6"} !important;
+        border: 3px solid {field_border_color} !important;
+        box-shadow: 4px 4px 0px {field_shadow_color} !important;
         border-radius: 0px !important;
-        background-color: {input_bg} !important;
-        color: {text_color} !important;
+        background-color: {field_bg} !important;
+        color: {field_text_color} !important;
+    }}
+
+    div.stSelectbox > div > div * {{
+        color: {field_text_color} !important;
+        fill: {field_text_color} !important;
+    }}
+
+    ul[data-baseweb="menu"] {{
+        background-color: {field_bg} !important;
+        border: 3px solid {field_border_color} !important;
+        border-radius: 0px !important;
+    }}
+    ul[data-baseweb="menu"] li, ul[data-baseweb="menu"] li * {{
+        color: {field_text_color} !important;
+        background-color: {field_bg} !important;
+    }}
+    ul[data-baseweb="menu"] li:hover {{
+        background-color: #FFD93D !important;
     }}
     
     div.stButton > button, div.stDownloadButton > button {{
@@ -405,10 +439,10 @@ def get_demo_template():
             "Is an automated clean-agent fire suppression system installed?",
             "Are manual clean-agent fire extinguishers present within 15 meters of all server racks?",
             "Are annual pressure test and maintenance logs verified for the clean-agent system?",
-            "Is biometric authentication enforced at the main datacenter perimeter?",
+            "Is biometric authentication enforced at the main facility perimeter?",
             "Is a strict 100% visitor manual escort policy enforced with physical badge logs?"
         ],
-        "Target": ["DC Facility Manager", "DC Safety Officer", "DC Facility Engineer", "DC Security Lead", "DC Reception / Guards"],
+        "Target": ["Facility Manager", "Safety Officer", "Facility Engineer", "Security Lead", "Reception / Guards"],
         "Expectation": ["Yes", "Yes", "Yes", "Yes", "Yes"],
         "Parent_ID": ["", "1", "1", "", "4"],
         "Trigger_Value": ["", "No", "Yes", "", "No"],
@@ -647,15 +681,23 @@ def update_finding(ctrl_key, find_key):
     val = st.session_state[find_key]
     st.session_state.responses[ctrl_key]['finding_category'] = val if val != "SELECT FINDING CATEGORY" else None
 
-dc_type_options = ["TYPE OF DC", "COCO", "SAP OWNED", "PARTNER"]
+audit_type_options = ["TYPE OF AUDIT", "Datacenter", "Field/Location", "Custom"]
+
+def get_resolved_audit_type():
+    sel = st.session_state.type_of_audit
+    if sel == "Custom":
+        return st.session_state.custom_audit_type.strip() or "Custom"
+    if sel and sel != "TYPE OF AUDIT":
+        return sel
+    return ""
 
 # =========================================================================
 # 7. HEADER SCOPE SECTION
 # =========================================================================
 logo_col, fields_col = st.columns([2, 6])
 with logo_col:
-    st.markdown('<div class="brutal-logo">ISO</div>', unsafe_allow_html=True)
-    st.caption("AUDIT ENGINE")
+    st.markdown('<div class="brutal-logo">AC</div>', unsafe_allow_html=True)
+    st.caption("AUDIT CHECKLIST")
 
 with fields_col:
     r1_col1, r1_col2 = st.columns(2)
@@ -666,16 +708,23 @@ with fields_col:
 
     r2_col1, r2_col2 = st.columns(2)
     with r2_col1:
-        st.session_state.dc_name = st.text_input("DC Name Label", value=st.session_state.dc_name, placeholder="DC NAME", label_visibility="collapsed")
+        st.session_state.entity_name = st.text_input("Entity Name Label", value=st.session_state.entity_name, placeholder="ENTITY NAME", label_visibility="collapsed")
     with r2_col2:
-        st.session_state.dc_location = st.text_input("DC Location Label", value=st.session_state.dc_location, placeholder="DC LOCATION", label_visibility="collapsed")
+        st.session_state.entity_location = st.text_input("Entity Location Label", value=st.session_state.entity_location, placeholder="ENTITY LOCATION", label_visibility="collapsed")
 
     r3_col1, r3_col2 = st.columns(2)
     with r3_col1:
-        st.session_state.dc_pocs = st.text_input("DC PoCs Label", value=st.session_state.dc_pocs, placeholder="DC PoCs", label_visibility="collapsed")
+        st.session_state.pocs = st.text_input("Point of Contacts Label", value=st.session_state.pocs, placeholder="POINT OF CONTACTS / AUDITEES", label_visibility="collapsed")
     with r3_col2:
-        dc_type_idx = dc_type_options.index(st.session_state.type_of_dc) if st.session_state.type_of_dc in dc_type_options else 0
-        st.session_state.type_of_dc = st.selectbox("Type of DC Label", dc_type_options, index=dc_type_idx, label_visibility="collapsed")
+        audit_type_idx = audit_type_options.index(st.session_state.type_of_audit) if st.session_state.type_of_audit in audit_type_options else 0
+        st.session_state.type_of_audit = st.selectbox("Type of Audit Label", audit_type_options, index=audit_type_idx, label_visibility="collapsed")
+        if st.session_state.type_of_audit == "Custom":
+            st.session_state.custom_audit_type = st.text_input(
+                "Custom Audit Type Label",
+                value=st.session_state.custom_audit_type,
+                placeholder="SPECIFY CUSTOM TYPE OF AUDIT...",
+                label_visibility="collapsed"
+            )
 
 st.markdown("---")
 
@@ -729,10 +778,10 @@ if st.session_state.is_mobile_view:
     meta_info = {
         "lead": st.session_state.lead_auditor or "N/A",
         "co": st.session_state.co_auditor or "N/A",
-        "dc_name": st.session_state.dc_name or "N/A",
-        "dc_loc": st.session_state.dc_location or "N/A",
-        "dc_pocs": st.session_state.dc_pocs or "N/A",
-        "dc_type": st.session_state.type_of_dc or "N/A",
+        "entity_name": st.session_state.entity_name or "N/A",
+        "entity_loc": st.session_state.entity_location or "N/A",
+        "pocs": st.session_state.pocs or "N/A",
+        "audit_type": get_resolved_audit_type() or "N/A",
         "date": datetime.now().strftime("%d/%m/%Y")
     }
     
@@ -1295,16 +1344,16 @@ if st.session_state.is_mobile_view:
             function downloadCSV() {{
                 const activeDeck = getActiveVisibleDeck();
                 let csvContent = "data:text/csv;charset=utf-8,";
-                csvContent += "Lead Auditor,Co Auditor,DC Name,DC Location,DC PoCs,Type of DC,Reference,Sector,Control Mapping // Source,Condition,Target,Status,Finding Category,Evidence,Info\\n";
+                csvContent += "Lead Auditor,Co Auditor,Entity Name,Entity Location,Point of Contacts / Auditees,Type of Audit,Reference,Sector,Control Mapping // Source,Condition,Target,Status,Finding Category,Evidence,Info\\n";
                 
                 activeDeck.forEach(item => {{
                     const row = [
                         sanitizeCSV(meta.lead),
                         sanitizeCSV(meta.co),
-                        sanitizeCSV(meta.dc_name),
-                        sanitizeCSV(meta.dc_loc),
-                        sanitizeCSV(meta.dc_pocs),
-                        sanitizeCSV(meta.dc_type),
+                        sanitizeCSV(meta.entity_name),
+                        sanitizeCSV(meta.entity_loc),
+                        sanitizeCSV(meta.pocs),
+                        sanitizeCSV(meta.audit_type),
                         sanitizeCSV(item.id),
                         sanitizeCSV(item.domain),
                         sanitizeCSV(item.source || ''),
@@ -1321,7 +1370,7 @@ if st.session_state.is_mobile_view:
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
-                link.setAttribute("download", `audit_manifest_${{(meta.dc_name || 'dc').replace(/\\s+/g, '_')}}.csv`);
+                link.setAttribute("download", `audit_manifest_${{(meta.entity_name || 'entity').replace(/\\s+/g, '_')}}.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -1352,10 +1401,10 @@ if st.session_state.is_mobile_view:
                 const reportWindow = window.open('', '', 'width=950,height=600');
                 reportWindow.document.write(`
                     <html>
-                    <head><title>Preliminary Audit Report - ${{escapeHtml(meta.dc_name)}}</title></head>
+                    <head><title>Preliminary Audit Report - ${{escapeHtml(meta.entity_name)}}</title></head>
                     <body style="font-family: monospace; padding: 20px;">
-                        <h2>SAP Data Center Audit Preliminary Report</h2>
-                        <p><b>Date:</b> ${{escapeHtml(meta.date)}} | <b>DC:</b> ${{escapeHtml(meta.dc_name)}} (${{escapeHtml(meta.dc_loc)}}) | <b>Auditor:</b> ${{escapeHtml(meta.lead)}}</p>
+                        <h2>Audit Checklist Preliminary Report</h2>
+                        <p><b>Date:</b> ${{escapeHtml(meta.date)}} | <b>Type of Audit:</b> ${{escapeHtml(meta.audit_type)}} | <b>Entity:</b> ${{escapeHtml(meta.entity_name)}} (${{escapeHtml(meta.entity_loc)}}) | <b>Auditor:</b> ${{escapeHtml(meta.lead)}}</p>
                         <table style="width:100%; border-collapse:collapse; font-size:11px;">
                             <thead>
                                 <tr style="background:#000; color:#fff;">
@@ -1600,6 +1649,7 @@ f"""<div class="brutal-sidebar-card">
 # 11. EXTRACTION & REPORT GENERATION
 if not st.session_state.is_mobile_view:
     st.markdown("---")
+    resolved_audit_type = get_resolved_audit_type()
     export_rows = []
     for item in applicable_data:
         ctrl_key = item['key']
@@ -1619,10 +1669,10 @@ if not st.session_state.is_mobile_view:
         export_rows.append({
             "Lead Auditor": sanitize_csv_cell(st.session_state.lead_auditor),
             "Co Auditor": sanitize_csv_cell(st.session_state.co_auditor),
-            "DC Name": sanitize_csv_cell(st.session_state.dc_name),
-            "DC Location": sanitize_csv_cell(st.session_state.dc_location),
-            "DC PoCs": sanitize_csv_cell(st.session_state.dc_pocs),
-            "Type of DC": sanitize_csv_cell(st.session_state.type_of_dc),
+            "Entity Name": sanitize_csv_cell(st.session_state.entity_name),
+            "Entity Location": sanitize_csv_cell(st.session_state.entity_location),
+            "Point of Contacts / Auditees": sanitize_csv_cell(st.session_state.pocs),
+            "Type of Audit": sanitize_csv_cell(resolved_audit_type),
             "Reference": sanitize_csv_cell(item['id']),
             "Sector": sanitize_csv_cell(item['domain']),
             "Control Mapping // Source": sanitize_csv_cell(item.get('source') or ''),
@@ -1687,18 +1737,19 @@ if not st.session_state.is_mobile_view:
         )
         
         elements = []
-        elements.append(Paragraph("SAP Data Center Audit Preliminary Report", title_style))
+        elements.append(Paragraph("Audit Checklist Preliminary Report", title_style))
         
         date_str = datetime.now().strftime("%d/%m/%Y")
-        dc_name = html.escape(st.session_state.dc_name or "[DC Name]")
-        dc_location = html.escape(st.session_state.dc_location or "[DC Location]")
+        entity_name = html.escape(st.session_state.entity_name or "[Entity Name]")
+        entity_location = html.escape(st.session_state.entity_location or "[Entity Location]")
         lead_auditor = html.escape(st.session_state.lead_auditor or "[Lead Auditor]")
         co_auditor = html.escape(st.session_state.co_auditor or "[Co Auditor]")
-        dc_pocs = html.escape(st.session_state.dc_pocs or "[DC PoCs]")
+        pocs = html.escape(st.session_state.pocs or "[Point of Contacts / Auditees]")
+        audit_type = html.escape(get_resolved_audit_type() or "[Type of Audit]")
         
         intro_text = (
-            f"On {date_str}, {dc_name} at {dc_location} was audited by "
-            f"{lead_auditor} and {co_auditor} in the presence of {dc_pocs}. "
+            f"On {date_str}, a <b>{audit_type}</b> audit of {entity_name} at {entity_location} was conducted by "
+            f"{lead_auditor} and {co_auditor} in the presence of {pocs}. "
             f"Here are the preliminary audit results:"
         )
         elements.append(Paragraph(intro_text, body_style))

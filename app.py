@@ -104,7 +104,13 @@ div[data-testid="stModal"],
 
 div[data-testid="stDialog"] > div,
 div[data-testid="stModal"] > div,
-[data-baseweb="modal"] > div {
+[data-baseweb="modal"] > div,
+[data-baseweb="modal"] > div > div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    max-width: none !important;
+    width: auto !important;
     overflow: visible !important;
 }
 
@@ -117,22 +123,11 @@ body [data-baseweb="modal"] [role="dialog"] {
     border: 3px solid rgba(0, 0, 0, 0.25) !important;
     box-shadow: 0px 24px 60px rgba(0, 0, 0, 0.5) !important;
     padding: 40px 32px 30px 32px !important;
-    width: min(680px, 92vw) !important;
+    width: 680px !important;
     max-width: 92vw !important;
-    min-width: min(680px, 92vw) !important;
-    overflow: visible !important;
+    margin: 0 auto !important;
     box-sizing: border-box !important;
     color: #000000 !important;
-}
-
-body div[data-testid="stDialog"] [role="dialog"] > div,
-body [data-baseweb="modal"] [role="dialog"] > div {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
 }
 
 body div[data-testid="stDialog"] h1,
